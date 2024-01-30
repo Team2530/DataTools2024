@@ -1,2 +1,4 @@
 rootProject.name = 'DataTools2024'
 include "DataParser"
+include "ExampleApp"
+include "DataViewer"
