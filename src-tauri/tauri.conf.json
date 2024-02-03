@@ -34,8 +34,8 @@
         "fullscreen": false,
         "resizable": true,
         "title": "FRC Team 2530 Data Log Viewer",
-        "width": 1600,
-        "height": 800
+        "width": 800,
+        "height": 400
       }
     ]
   }
