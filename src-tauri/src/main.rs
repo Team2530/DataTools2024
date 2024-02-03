@@ -4,9 +4,11 @@ use data_parser;
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
-fn file_blaster(file_path: &str) -> String {
-    let header = data_parser::parse_logfile(file_path).unwrap();
-    format!("Team number is {}!", header.team_number)
+fn file_blaster(file_path: &str) -> Result<String, String> {
+    match data_parser::parse_logfile(file_path) {
+        Ok(header) => Ok(format!("Team number is {}!", header.team_number)),
+        Err(e) => Err(e.to_string())
+    }
 }
 
 fn main() {
