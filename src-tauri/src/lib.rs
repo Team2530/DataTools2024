@@ -18,7 +18,6 @@ fn read_n_bytes<R: Read>(reader: &mut R, n: usize) -> io::Result<Vec<u8>> {
         Err(e) => Err(e),
     }
 }
-
 pub struct LogHeader {
     pub team_number: String,
     pub log_version: u8,

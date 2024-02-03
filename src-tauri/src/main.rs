@@ -4,13 +4,14 @@ use data_parser;
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
+fn file_blaster(file_path: &str) -> String {
+    let header = data_parser::parse_logfile(file_path).unwrap();
+    format!("Team number is {}!", header.team_number)
 }
 
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![greet])
+        .invoke_handler(tauri::generate_handler![file_blaster])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
