@@ -2,6 +2,15 @@ use std::fs::File;
 use std::io::{self, Read, BufReader};
 use flate2::read::GzDecoder;
 
+use serde::{Serialize};
+
+#[derive(Serialize, Debug)]
+pub struct LogHeader {
+    pub team_number: String,
+    pub log_version: u8,
+    pub start_time: String,
+}
+
 fn bytes_to_hex(bytes: Vec<u8>) -> String {
     bytes.iter().map(|byte| format!("{:02x}", byte)).collect()
 }
@@ -18,11 +27,7 @@ fn read_n_bytes<R: Read>(reader: &mut R, n: usize) -> io::Result<Vec<u8>> {
         Err(e) => Err(e),
     }
 }
-pub struct LogHeader {
-    pub team_number: String,
-    pub log_version: u8,
-    pub start_time: String,
-}
+
 
 // Function to read a string with a length prefix
 fn read_string_bytes<R: Read>(reader: &mut R) -> io::Result<String> {
