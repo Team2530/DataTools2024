@@ -7,7 +7,7 @@ fn bytes_to_hex(bytes: Vec<u8>) -> String {
 }
 
 fn bytes_to_i16(bytes: &[u8]) -> i16 {
-    i16::from_le_bytes([bytes[0], bytes[1]])
+    ((bytes[0] as i16) << 8) | (bytes[1] as i16)
 }
 
 // Function to read a specified number of bytes and return them as a vector
@@ -27,7 +27,8 @@ pub struct LogHeader {
 
 // Function to read a string with a length prefix
 fn read_string_bytes<R: Read>(reader: &mut R) -> io::Result<String> {
-    let string_len = read_n_bytes(reader, 1)?[0];
+    let string_len = read_n_bytes(reader, 2)?;
+    let string_len = bytes_to_i16(&string_len);
     println!("string length: {}", string_len);
     let string_bytes = read_n_bytes(reader, string_len as usize)?;
     let string = String::from_utf8(string_bytes).expect("Invalid UTF-8");
@@ -47,10 +48,6 @@ pub fn parse_logfile(path: &str) -> io::Result<LogHeader> {
 
     let log_version = read_n_bytes(&mut reader, 1)?[0];
     println!("Log version: {}", log_version);
-
-    // Consume byte
-    let mut discard = [0; 1];
-    reader.read_exact(&mut discard).ok();
 
     let start_time_string = read_string_bytes(&mut reader)?;
     println!("DateTime: {}", start_time_string);
