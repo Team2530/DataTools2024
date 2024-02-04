@@ -33,7 +33,6 @@ fn read_n_bytes<R: Read>(reader: &mut R, n: usize) -> io::Result<Vec<u8>> {
 fn read_string_bytes<R: Read>(reader: &mut R) -> io::Result<String> {
     let string_len = read_n_bytes(reader, 2)?;
     let string_len = bytes_to_i16(&string_len);
-    println!("string length: {}", string_len);
     let string_bytes = read_n_bytes(reader, string_len as usize)?;
     let string = String::from_utf8(string_bytes).expect("Invalid UTF-8");
 
@@ -48,13 +47,10 @@ pub fn parse_logfile(path: &str) -> io::Result<LogHeader> {
 
     let team_bytes = read_n_bytes(&mut reader, 2)?;
     let team_number = bytes_to_hex(team_bytes);
-    println!("Team number: {}", team_number);
 
     let log_version = read_n_bytes(&mut reader, 1)?[0];
-    println!("Log version: {}", log_version);
 
     let start_time_string = read_string_bytes(&mut reader)?;
-    println!("DateTime: {}", start_time_string);
     
     Ok(LogHeader {
         team_number: team_number,
