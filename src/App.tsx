@@ -6,6 +6,7 @@ import { Fieldset } from "primereact/fieldset";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 
+
 //TODO: the object returned by 'file_blaster' should contain a header object and a list of frames
 class DataHeader {
   log_version: number;
