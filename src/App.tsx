@@ -23,19 +23,23 @@ class DataHeader {
 function FilePicker(props: { setData: React.Dispatch<React.SetStateAction<DataHeader | undefined>>, setErr: React.Dispatch<React.SetStateAction<string>> }) {
   const [path, setPath] = React.useState("");
 
+  const handleFileBlast = () => {
+    invoke('file_blaster', { filePath: path })
+      .then((v: any) => props.setData(new DataHeader(v.log_version, v.start_time, v.team_number)))
+      .catch(err => props.setErr(err));
+  };
+
+  const handleFileSelect = () => {
+    open()
+      .then((v: any) => {
+        setPath(v);
+        handleFileBlast();
+      })
+      .catch(err => props.setErr(err));
+  };
+
   return <Fieldset legend="File Picker">
-    <Button onClick={_ => 
-      open()
-        .then((v: any) => setPath(v))
-        .catch(err => props.setErr(err))
-      }
-      label="Select" />
-    <Button onClick={_ =>
-      invoke('file_blaster', { filePath: path })
-        .then((v: any) => props.setData(new DataHeader(v.log_version, v.start_time, v.team_number)))
-        .catch(err => props.setErr(err))
-    }
-      label="Blast File!" />
+    <Button onClick={handleFileSelect} label="Select and Blast File!" />
   </Fieldset>;
 }
 
