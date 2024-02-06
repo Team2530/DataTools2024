@@ -5,6 +5,7 @@ import { InputText } from "primereact/inputtext";
 import { Fieldset } from "primereact/fieldset";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
+import { open } from "@tauri-apps/api/dialog";
 
 //TODO: the object returned by 'file_blaster' should contain a header object and a list of frames
 class DataHeader {
@@ -22,14 +23,23 @@ class DataHeader {
 function FilePicker(props: { setData: React.Dispatch<React.SetStateAction<DataHeader | undefined>>, setErr: React.Dispatch<React.SetStateAction<string>> }) {
   const [path, setPath] = React.useState("");
 
-  return <Fieldset legend="Select File">
-    <InputText onChange={(e) => setPath(e.target.value)} />
-    <Button onClick={_ =>
-      invoke('file_blaster', { filePath: path })
-        .then((v: any) => props.setData(new DataHeader(v.log_version, v.start_time, v.team_number)))
-        .catch(err => props.setErr(err))
-    }
-      label="Select" />
+  const handleFileBlast = () => {
+    invoke('file_blaster', { filePath: path })
+      .then((v: any) => props.setData(new DataHeader(v.log_version, v.start_time, v.team_number)))
+      .catch(err => props.setErr(err));
+  };
+
+  const handleFileSelect = () => {
+    open()
+      .then((v: any) => {
+        setPath(v);
+        handleFileBlast();
+      })
+      .catch(err => props.setErr(err));
+  };
+
+  return <Fieldset legend="File Picker">
+    <Button onClick={handleFileSelect} label="Select and Blast File!" />
   </Fieldset>;
 }
 
