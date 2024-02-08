@@ -1,3 +1,4 @@
+// TODO: parse constants
 use std::fs::File;
 use std::io::{self, Read, BufReader};
 use flate2::read::GzDecoder;
@@ -9,6 +10,53 @@ pub struct LogHeader {
     pub team_number: String,
     pub log_version: u8,
     pub start_time: String,
+    pub constants: Vec<ConstantData>
+}
+
+pub struct ConstantData {
+    // TODO ...
+}
+
+pub struct DataFrame {
+    /*
+    data.writeDouble(swerve.getHeading());
+
+    for(int smi = 0; smi < 4; smi ++) {
+        final SwerveModule swerveModule = swerve.modules[smi];
+
+        data.writeDouble(swerveModule.driveMotor.get());
+
+        data.writeDouble(swerveModule.getDrivePosition());
+        data.writeDouble(swerveModule.getDriveVelocity());
+
+        data.writeDouble(swerveModule.steerMotor.get());
+        data.writeDouble(swerveModule.getSteerPosition());
+        data.writeDouble(swerveModule.getSteerVelocity());
+
+        data.writeDouble(swerveModule.steerPID.getP());
+        data.writeDouble(swerveModule.steerPID.getI());
+        data.writeDouble(swerveModule.steerPID.getD());
+    }
+     */
+
+    pub swerve_heading: f64,
+    
+    pub drive_motor_values: Vec<f64>,
+    pub drive_motor_positions: Vec<f64>,
+    pub drive_motor_velocities: Vec<f64>,
+    
+    pub steer_motor_values: Vec<f64>,
+    pub steer_motor_positions: Vec<f64>,
+    pub steer_motor_velocities: Vec<f64>,
+
+    pub swerve_p: Vec<f64>,
+    pub swerve_i: Vec<f64>,
+    pub swerve_d: Vec<f64>,
+}
+
+pub struct Log {
+    pub header: LogHeader,
+    pub frames: Vec<DataFrame>
 }
 
 fn bytes_to_hex(bytes: Vec<u8>) -> String {
@@ -39,12 +87,8 @@ fn read_string_bytes<R: Read>(reader: &mut R) -> io::Result<String> {
     Ok(string)
 }
 
-pub fn parse_logfile(path: &str) -> io::Result<LogHeader> {
-    let file = File::open(path)?;
-    let file = GzDecoder::new(file);
-    let mut reader = BufReader::new(file);
-
-
+pub fn parse_log_header<R: Read>(mut reader: &mut BufReader<R>) -> io::Result<LogHeader> {
+    
     let team_bytes = read_n_bytes(&mut reader, 2)?;
     let team_number = bytes_to_hex(team_bytes);
 
@@ -52,11 +96,38 @@ pub fn parse_logfile(path: &str) -> io::Result<LogHeader> {
 
     let start_time_string = read_string_bytes(&mut reader)?;
     
+    //TODO: constants
+
+    //TODO: constants
+
+    //TODO: constants
+
+    //TODO: constants
+
+    //TODO: constants
+
+
     Ok(LogHeader {
         team_number: team_number,
         log_version,
         start_time: start_time_string,
+        constants: Vec::new()
     })
+}
+
+pub fn parse_log_frames<R: Read>(reader: &mut BufReader<R>) -> io::Result<Vec<DataFrame>> {
+    Ok(Vec::new())
+}
+
+pub fn parse_logfile(path: &str) -> io::Result<Log> {
+    let file = File::open(path)?;
+    let file = GzDecoder::new(file);
+    let mut reader: BufReader<GzDecoder<File>> = BufReader::new(file);
+    
+    let header: LogHeader = parse_log_header(&mut reader)?;
+    let frames: Vec<DataFrame> = parse_log_frames(&mut reader)?;
+
+    unimplemented!("Logfile parsing is not yet finished!");
 }
 
 #[cfg(test)]
